@@ -97,9 +97,9 @@ DATABASES = {
         'NAME': os.getenv('POSTGRES_DB', 'formdb'),
         'USER': os.getenv('POSTGRES_USER', 'postgres'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'admin'),
-        'HOST': os.getenv('POSTGRES_HOST', 'db'),  # matches the docker service name
-        'PORT': os.getenv('POSTGRES_PORT', '5432'),
-        'CONN_MAX_AGE': 60,
+        'HOST': os.getenv('PGBOUNCER_HOST', 'pgbouncer'),  # now points to PgBouncer
+        'PORT': os.getenv('PGBOUNCER_PORT', '6432'),       # PgBouncer listens here
+        'CONN_MAX_AGE': 0,  # set 0 to avoid persistent connections that block the pool
     }
 }
 

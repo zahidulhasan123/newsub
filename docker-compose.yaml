@@ -265,7 +265,7 @@ services:
 
   web:
     build: .
-    command: gunicorn backend.asgi:application -k uvicorn.workers.UvicornWorker -b 0.0.0.0:9000 -w 16 --threads 8 --timeout 120
+    command: gunicorn backend.asgi:application -k uvicorn.workers.UvicornWorker -b 0.0.0.0:9000 -w 50 --threads 8 --timeout 120
     depends_on:
       db:
         condition: service_healthy
