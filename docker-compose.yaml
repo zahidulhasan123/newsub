@@ -261,31 +261,27 @@ services:
       - "6379:6379"
 
   # Django Web (ASGI) - Gunicorn + UvicornWorker
+  
+
   web:
-    build: .
-    deploy:
-      replicas: 10
-    command: gunicorn backend.asgi:application 
-      -k uvicorn.workers.UvicornWorker 
-      -b 0.0.0.0:9000 
-      -w 16 
-      --threads 8 
-      --timeout 120
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    environment:
-      POSTGRES_DB: formdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
-      POSTGRES_HOST: db
-      POSTGRES_PORT: 5432
-      CELERY_BROKER_URL: redis://redis:6379/0
-      CELERY_RESULT_BACKEND: redis://redis:6379/1
-    ports:
-      - "9000:9000"
+  build: .
+  command: gunicorn backend.asgi:application -k uvicorn.workers.UvicornWorker -b 0.0.0.0:9000 -w 16 --threads 8 --timeout 120
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  environment:
+    POSTGRES_DB: formdb
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: admin
+    POSTGRES_HOST: db
+    POSTGRES_PORT: 5432
+    CELERY_BROKER_URL: redis://redis:6379/0
+    CELERY_RESULT_BACKEND: redis://redis:6379/1
+  ports:
+    - "9000:9000"
+
 
   # Celery worker
   celery:
@@ -304,8 +300,7 @@ services:
       POSTGRES_PORT: 5432
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/1
-    deploy:
-      replicas: 3   # multiple Celery containers for high concurrency
+    
 
 volumes:
   postgres_data:
