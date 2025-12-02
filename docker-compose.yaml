@@ -265,7 +265,7 @@ services:
 
   web:
     build: .
-    command: gunicorn backend.asgi:application -k uvicorn.workers.UvicornWorker -b 0.0.0.0:9000 -w 50 --threads 8 --timeout 120
+    command: gunicorn backend.asgi:application -k uvicorn.workers.UvicornWorker -b 0.0.0.0:9000 -w 20 --threads 4 --timeout 120
     depends_on:
       db:
         condition: service_healthy
@@ -286,7 +286,7 @@ services:
   # Celery worker
   celery:
     build: .
-    command: celery -A backend worker --loglevel=info --concurrency=32 --pool=solo
+    command: celery -A backend worker --loglevel=info --concurrency=32 --pool=prefork
     depends_on:
       db:
         condition: service_healthy
@@ -296,8 +296,8 @@ services:
       POSTGRES_DB: formdb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
-      POSTGRES_HOST: db
-      POSTGRES_PORT: 5432
+      POSTGRES_HOST: pgbouncer
+      POSTGRES_PORT: 6432
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/1
 
@@ -306,12 +306,13 @@ services:
     restart: always
     environment:
       DATABASE_URL: postgres://postgres:admin@db:5432/formdb
+      # AUTH_FILE=/etc/pgbouncer/userlist.txt
       AUTH_TYPE: md5
       POOL_MODE: transaction
-      MAX_CLIENT_CONN: 500
-      DEFAULT_POOL_SIZE: 100
-    # ports:
-    #   - "6433:6432"   # PgBouncer listens here
+      MAX_CLIENT_CONN: 2000
+      DEFAULT_POOL_SIZE: 200
+    ports:
+      - "6432:6432"   # PgBouncer listens here
     depends_on:
       db:
         condition: service_healthy
