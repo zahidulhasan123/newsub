@@ -1,3 +1,35 @@
+# # version: '3.9'
+
+# # services:
+# #   db:
+# #     image: postgres:15-alpine
+# #     restart: always
+# #     environment:
+# #       POSTGRES_DB: formdb
+# #       POSTGRES_USER: postgres
+# #       POSTGRES_PASSWORD: admin
+# #     ports:
+# #       - "5432:5432"
+# #     volumes:
+# #       - postgres_data:/var/lib/postgresql/data
+
+# #   web:
+# #     build: .
+# #     command: gunicorn backend.asgi:application -k uvicorn.workers.UvicornWorker -b 0.0.0.0:9000 -w 4
+# #     environment:
+# #       POSTGRES_DB: formdb
+# #       POSTGRES_USER: postgres
+# #       POSTGRES_PASSWORD: admin
+# #       POSTGRES_HOST: db
+# #       POSTGRES_PORT: 5432
+# #     depends_on:
+# #       - db
+# #     ports:
+# #       - "9000:9000"
+
+# # volumes:
+# #   postgres_data:
+
 # version: '3.9'
 
 # services:
@@ -13,6 +45,12 @@
 #     volumes:
 #       - postgres_data:/var/lib/postgresql/data
 
+#   redis:
+#     image: redis:7-alpine
+#     restart: always
+#     ports:
+#       - "6379:6379"
+
 #   web:
 #     build: .
 #     command: gunicorn backend.asgi:application -k uvicorn.workers.UvicornWorker -b 0.0.0.0:9000 -w 4
@@ -22,13 +60,34 @@
 #       POSTGRES_PASSWORD: admin
 #       POSTGRES_HOST: db
 #       POSTGRES_PORT: 5432
+#       CELERY_BROKER_URL: redis://redis:6379/0
+#       CELERY_RESULT_BACKEND: redis://redis:6379/1
 #     depends_on:
 #       - db
+#       - redis
 #     ports:
 #       - "9000:9000"
 
+#   celery:
+#     build: .
+#     command: celery -A backend worker --loglevel=info
+#     depends_on:
+#       - db
+#       - redis
+#     environment:
+#       POSTGRES_DB: formdb
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: admin
+#       POSTGRES_HOST: db
+#       POSTGRES_PORT: 5432
+#       CELERY_BROKER_URL: redis://redis:6379/0
+#       CELERY_RESULT_BACKEND: redis://redis:6379/1
+
+
+
 # volumes:
 #   postgres_data:
+
 
 version: '3.9'
 
@@ -40,20 +99,31 @@ services:
       POSTGRES_DB: formdb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   redis:
     image: redis:7-alpine
     restart: always
-    ports:
-      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   web:
     build: .
     command: gunicorn backend.asgi:application -k uvicorn.workers.UvicornWorker -b 0.0.0.0:9000 -w 4
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       POSTGRES_DB: formdb
       POSTGRES_USER: postgres
@@ -62,9 +132,6 @@ services:
       POSTGRES_PORT: 5432
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/1
-    depends_on:
-      - db
-      - redis
     ports:
       - "9000:9000"
 
@@ -72,8 +139,10 @@ services:
     build: .
     command: celery -A backend worker --loglevel=info
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       POSTGRES_DB: formdb
       POSTGRES_USER: postgres
@@ -82,8 +151,6 @@ services:
       POSTGRES_PORT: 5432
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/1
-
-
 
 volumes:
   postgres_data:
