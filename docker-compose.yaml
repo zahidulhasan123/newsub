@@ -265,11 +265,11 @@ services:
     build: .
     deploy:
       replicas: 10
-    command: gunicorn backend.asgi:application \
-      -k uvicorn.workers.UvicornWorker \
-      -b 0.0.0.0:9000 \
-      -w 16 \
-      --threads 8 \
+    command: gunicorn backend.asgi:application 
+      -k uvicorn.workers.UvicornWorker 
+      -b 0.0.0.0:9000 
+      -w 16 
+      --threads 8 
       --timeout 120
     depends_on:
       db:
