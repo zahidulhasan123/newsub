@@ -311,7 +311,7 @@ services:
       MAX_CLIENT_CONN: 500
       DEFAULT_POOL_SIZE: 100
     ports:
-      - "6432:6432"   # PgBouncer listens here
+      - "6433:6432"   # PgBouncer listens here
     depends_on:
       db:
         condition: service_healthy
