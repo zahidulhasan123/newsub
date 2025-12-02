@@ -22,4 +22,4 @@ COPY . .
 EXPOSE 9000
 
 # Run Gunicorn (fast, stable) with 4 workers
-CMD ["gunicorn", "backend.wsgi:application", "-b", "0.0.0.0:9000", "-w", "4"]
+CMD ["gunicorn", "backend.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:9000", "-w", "4", "--threads", "4"]
