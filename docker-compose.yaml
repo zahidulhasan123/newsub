@@ -276,7 +276,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
       POSTGRES_HOST: pgbouncer
-      POSTGRES_PORT: 6432
+      POSTGRES_PORT: 6433
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/1
     ports:
@@ -297,7 +297,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
       POSTGRES_HOST: pgbouncer
-      POSTGRES_PORT: 6432
+      POSTGRES_PORT: 6433
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/1
 
@@ -312,7 +312,7 @@ services:
       MAX_CLIENT_CONN: 2000
       DEFAULT_POOL_SIZE: 200
     ports:
-      - "6432:6432"   # PgBouncer listens here
+      - "6433:6432"   # PgBouncer listens here
     depends_on:
       db:
         condition: service_healthy
