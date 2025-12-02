@@ -275,8 +275,8 @@ services:
       POSTGRES_DB: formdb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
-      POSTGRES_HOST: db
-      POSTGRES_PORT: 5432
+      POSTGRES_HOST: pgbouncer
+      POSTGRES_PORT: 6432
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/1
     ports:
