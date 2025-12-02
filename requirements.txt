@@ -1,0 +1,12 @@
+django 
+djangorestframework 
+psycopg2-binary 
+djangorestframework-simplejwt 
+django-cors-headers 
+django-filter 
+gunicorn 
+uvicorn
+djangorestframework-simplejwt
+celery 
+redis
+locust
