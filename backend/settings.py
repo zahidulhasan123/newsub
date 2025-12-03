@@ -45,7 +45,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # add this AFTER SecurityMiddleware
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',  # add this AFTER SecurityMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -77,31 +77,31 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'formdb',
-#         'USER': 'postgres',
-#         'PASSWORD': 'admin',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#         'CONN_MAX_AGE': 5,  # persistent connections for performance
-#     }
-# }
-
-import os
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'formdb'),
-        'USER': os.getenv('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'admin'),
-        'HOST': os.getenv('PGBOUNCER_HOST', 'pgbouncer'),  # now points to PgBouncer
-        'PORT': os.getenv('PGBOUNCER_PORT', '6432'),       # PgBouncer listens here
-        'CONN_MAX_AGE': 0,  # set 0 to avoid persistent connections that block the pool
+        'NAME': 'formdb',
+        'USER': 'postgres',
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'CONN_MAX_AGE': 0,  # persistent connections for performance
     }
 }
+
+import os
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('POSTGRES_DB', 'formdb'),
+#         'USER': os.getenv('POSTGRES_USER', 'postgres'),
+#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'admin'),
+#         'HOST': os.getenv('PGBOUNCER_HOST', 'pgbouncer'),  # now points to PgBouncer
+#         'PORT': os.getenv('PGBOUNCER_PORT', '6432'),       # PgBouncer listens here
+#         'CONN_MAX_AGE': 0,  # set 0 to avoid persistent connections that block the pool
+#     }
+# }
 
 
 
@@ -140,7 +140,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 # Static files
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -168,10 +168,10 @@ SIMPLE_JWT = {
 
 
 
-# CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Broker
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'  # Store results (optional)
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/1'
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Broker
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'  # Store results (optional)
+# CELERY_BROKER_URL = 'redis://redis:6379/0'
+# CELERY_RESULT_BACKEND = 'redis://redis:6379/1'
 
 
 CELERY_ACCEPT_CONTENT = ['json']
@@ -193,4 +193,5 @@ CELERY_TIMEZONE = 'Asia/Dhaka'  # adjust your timezone
 
 
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+ASGI_APPLICATION = 'backend.asgi.application'
